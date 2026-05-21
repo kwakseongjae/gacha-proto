@@ -240,6 +240,24 @@
       margin-top: 8px;
       display: flex;
       justify-content: center;
+      z-index: 2;
+    }
+
+    .prize-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 20;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .prize-scale {
+      position: absolute;
+      left: 50%;
+      top: 190px;
+      width: 116px;
+      transform: translateX(-50%) scale(var(--machine-scale));
+      transform-origin: top center;
     }
 
     .machine-scale {
@@ -462,12 +480,12 @@
 
     .capsule-stage {
       position: absolute;
-      left: 50%;
-      top: 190px;
+      left: 0;
+      top: 0;
       width: 116px;
       height: 116px;
       opacity: 0;
-      transform: translate(-50%, -88px) scale(0.82);
+      transform: translateY(-88px) scale(0.82);
       z-index: 5;
       pointer-events: none;
     }
@@ -478,7 +496,7 @@
 
     .capsule-stage.open {
       opacity: 1;
-      transform: translate(-50%, -70px) scale(1);
+      transform: translateY(-70px) scale(1);
     }
 
     .capsule {
@@ -568,7 +586,35 @@
       place-items: center;
       text-align: center;
       gap: 8px;
-      z-index: 2;
+      z-index: 6;
+    }
+
+    .prize-reveal .product-visual {
+      max-width: 180px;
+      min-height: 130px;
+      padding: 8px;
+    }
+
+    .prize-reveal .product-visual.tumbler {
+      min-height: 150px;
+    }
+
+    .prize-reveal .product-visual.tumbler img {
+      max-height: 140px;
+    }
+
+    .prize-reveal .product-visual.cap img {
+      max-height: 100px;
+    }
+
+    .prize-reveal .product-visual.shirt img {
+      max-height: 105px;
+    }
+
+    .prize-reveal .miss-visual {
+      width: 96px;
+      height: 96px;
+      font-size: 30px;
     }
 
     .capsule-stage.opening .prize-reveal {
@@ -687,9 +733,9 @@
     .particle-field {
       position: absolute;
       inset: 0;
-      overflow: hidden;
+      overflow: visible;
       pointer-events: none;
-      z-index: 7;
+      z-index: 21;
     }
 
     .particle {
@@ -717,6 +763,7 @@
       border: 1px solid rgba(229, 232, 235, 0.82);
       box-shadow: var(--shadow2);
       backdrop-filter: blur(14px);
+      z-index: 8;
     }
 
     .result-title {
@@ -834,12 +881,12 @@
     }
 
     @keyframes capsuleDrop {
-      0% { opacity: 0; transform: translate(-50%, -88px) scale(0.62) rotate(-18deg); }
+      0% { opacity: 0; transform: translateY(-88px) scale(0.62) rotate(-18deg); }
       16% { opacity: 1; }
-      62% { transform: translate(-50%, -62px) scale(1) rotate(17deg); }
-      77% { transform: translate(-50%, -96px) scale(1.04, 0.96) rotate(-8deg); }
-      88% { transform: translate(-50%, -68px) scale(0.98, 1.03) rotate(5deg); }
-      100% { opacity: 1; transform: translate(-50%, -70px) scale(1) rotate(0deg); }
+      62% { transform: translateY(-62px) scale(1) rotate(17deg); }
+      77% { transform: translateY(-96px) scale(1.04, 0.96) rotate(-8deg); }
+      88% { transform: translateY(-68px) scale(0.98, 1.03) rotate(5deg); }
+      100% { opacity: 1; transform: translateY(-70px) scale(1) rotate(0deg); }
     }
 
     @keyframes burst {
@@ -1344,16 +1391,20 @@
           <div class="knob" aria-hidden="true"></div>
           <div class="legs"></div>
         </div>
-
-        <div class="capsule-stage" id="capsuleStage" aria-live="polite">
-          <div class="capsule">
-            <div class="cap-half cap-top"></div>
-            <div class="cap-half cap-bottom"></div>
-            <div class="cap-band"></div>
-          </div>
-          <div class="prize-reveal" id="prizeReveal"></div>
         </div>
-        <div class="particle-field" id="particleField" aria-hidden="true"></div>
+
+        <div class="prize-layer">
+          <div class="prize-scale">
+            <div class="capsule-stage" id="capsuleStage" aria-live="polite">
+              <div class="capsule">
+                <div class="cap-half cap-top"></div>
+                <div class="cap-half cap-bottom"></div>
+                <div class="cap-band"></div>
+              </div>
+              <div class="prize-reveal" id="prizeReveal"></div>
+            </div>
+          </div>
+          <div class="particle-field" id="particleField" aria-hidden="true"></div>
         </div>
       </div>
 
