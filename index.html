@@ -1,0 +1,1758 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>여명 캡슐 가챠 | よめいカプセルガチャ</title>
+  <style>
+    :root {
+      --blue500: #3182f6;
+      --blue600: #2272eb;
+      --blue50: #e8f3ff;
+      --grey50: #f9fafb;
+      --grey100: #f2f4f6;
+      --grey200: #e5e8eb;
+      --grey300: #d1d6db;
+      --grey400: #b0b8c1;
+      --grey500: #8b95a1;
+      --grey600: #6b7684;
+      --grey700: #4e5968;
+      --grey800: #333d4b;
+      --grey900: #191f28;
+      --green500: #03b26c;
+      --red500: #f04452;
+      --yellow500: #ffc342;
+      --teal500: #18a5a5;
+      --purple500: #a234c7;
+      --shadow2: 0 2px 8px rgba(0, 0, 0, 0.08);
+      --shadow3: 0 4px 12px rgba(0, 0, 0, 0.12);
+      --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+      --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+      --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+      --layout-max: 860px;
+      --machine-scale: 1.5;
+      --image-hover-scale: 1.45;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: "Toss Product Sans", "Tossface", "SF Pro KR", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Basier Square", "Apple SD Gothic Neo", Roboto, "Noto Sans KR", sans-serif;
+      color: var(--grey900);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(49, 130, 246, 0.16), transparent 24%),
+        radial-gradient(circle at 88% 14%, rgba(255, 195, 66, 0.22), transparent 26%),
+        radial-gradient(circle at 50% -10%, rgba(255, 195, 66, 0.18), transparent 32%),
+        linear-gradient(180deg, #fffdf8 0%, var(--grey50) 52%, #ffffff 100%);
+      letter-spacing: 0;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: min(100%, var(--layout-max));
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 20px 28px max(32px, env(safe-area-inset-bottom));
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      position: relative;
+    }
+
+    .app::before,
+    .app::after {
+      content: "✦";
+      position: fixed;
+      color: rgba(255, 195, 66, 0.45);
+      font-size: 18px;
+      pointer-events: none;
+      z-index: 0;
+      animation: twinkle 3.6s ease-in-out infinite;
+    }
+
+    .app::before { top: 8%; left: 6%; }
+    .app::after { top: 18%; right: 8%; animation-delay: -1.4s; }
+
+    .app > * { position: relative; z-index: 1; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding-top: 4px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 2px;
+    }
+
+    .eyebrow {
+      color: var(--grey500);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--grey900);
+      font-size: 32px;
+      line-height: 42px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      padding: 4px 11px;
+      border-radius: 13px;
+      background: rgba(100, 168, 255, 0.15);
+      color: var(--blue600);
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .stage-card {
+      position: relative;
+      overflow: visible;
+      min-height: calc(580px * var(--machine-scale));
+      border-radius: 20px;
+      background:
+        linear-gradient(180deg, rgba(232, 243, 255, 0.72), rgba(255, 255, 255, 0.28) 42%),
+        #ffffff;
+      box-shadow: var(--shadow2);
+      border: 1px solid rgba(229, 232, 235, 0.7);
+      isolation: isolate;
+    }
+
+    .stage-card::before {
+      content: "";
+      position: absolute;
+      inset: auto 8% 0;
+      height: 160px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.92)),
+        repeating-linear-gradient(90deg, rgba(25, 31, 40, 0.06) 0 1px, transparent 1px 28px);
+      transform: perspective(220px) rotateX(58deg);
+      transform-origin: bottom;
+      border-radius: 32px 32px 0 0;
+      z-index: -1;
+    }
+
+    .status-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      padding: 18px 18px 0;
+    }
+
+    .stock {
+      min-width: 0;
+      display: grid;
+      gap: 8px;
+      align-content: start;
+      border: 1px solid rgba(229, 232, 235, 0.84);
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.72);
+      padding: 11px 8px;
+      text-align: center;
+      backdrop-filter: blur(12px);
+      transition: transform 220ms var(--ease-standard), box-shadow 220ms var(--ease-standard);
+    }
+
+    .stock:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow3);
+    }
+
+    .stock.miss {
+      background: rgba(2, 32, 71, 0.05);
+    }
+
+    .stock-name {
+      color: var(--grey600);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+
+    .stock-count {
+      margin-top: 4px;
+      color: var(--grey900);
+      font-size: 28px;
+      line-height: 36px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .draw-meta {
+      margin: 0 18px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(229, 232, 235, 0.84);
+      display: grid;
+      gap: 6px;
+    }
+
+    .draw-meta-row {
+      color: var(--grey700);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 600;
+    }
+
+    .draw-meta-row.recent {
+      color: var(--grey600);
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    .draw-meta-row .hit {
+      color: var(--blue600);
+      font-weight: 700;
+    }
+
+    .draw-meta-row .miss {
+      color: var(--grey500);
+    }
+
+    .machine-wrap {
+      position: relative;
+      height: calc(385px * var(--machine-scale));
+      margin-top: 8px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .machine-scale {
+      position: relative;
+      width: 280px;
+      height: 385px;
+      transform: scale(var(--machine-scale));
+      transform-origin: top center;
+    }
+
+    .machine {
+      position: absolute;
+      left: 50%;
+      top: 22px;
+      width: 280px;
+      height: 342px;
+      transform: translateX(-50%);
+    }
+
+    .dome {
+      position: absolute;
+      left: 24px;
+      top: 0;
+      width: 232px;
+      height: 174px;
+      border-radius: 112px 112px 64px 64px;
+      background:
+        radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.92) 0 10%, transparent 11%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.32) 48%, rgba(49, 130, 246, 0.14));
+      border: 5px solid rgba(255, 255, 255, 0.9);
+      box-shadow: inset 0 0 22px rgba(49, 130, 246, 0.16), 0 10px 24px rgba(49, 130, 246, 0.14);
+      overflow: hidden;
+    }
+
+    .dome::after {
+      content: "";
+      position: absolute;
+      inset: 13px 34px auto auto;
+      width: 36px;
+      height: 98px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.42);
+      transform: rotate(-18deg);
+    }
+
+    .mini-capsule {
+      position: absolute;
+      width: 44px;
+      height: 32px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, var(--cap-a), var(--cap-a) 48%, rgba(255,255,255,0.88) 49%, rgba(255,255,255,0.88) 53%, var(--cap-b) 54%);
+      border: 2px solid rgba(255, 255, 255, 0.62);
+      box-shadow: inset 0 4px 9px rgba(255, 255, 255, 0.42), 0 5px 10px rgba(25, 31, 40, 0.12);
+      transform: rotate(var(--rot));
+      animation: floatCapsule 3.2s ease-in-out infinite;
+      animation-delay: var(--delay);
+    }
+
+    .mini-capsule:nth-child(1) { left: 28px; top: 82px; --rot: -18deg; --delay: -1.3s; --cap-a: #f04452; --cap-b: #ffc342; }
+    .mini-capsule:nth-child(2) { left: 82px; top: 58px; --rot: 13deg; --delay: -0.4s; --cap-a: #3182f6; --cap-b: #03b26c; }
+    .mini-capsule:nth-child(3) { left: 138px; top: 92px; --rot: 24deg; --delay: -1.7s; --cap-a: #a234c7; --cap-b: #f2f4f6; }
+    .mini-capsule:nth-child(4) { left: 156px; top: 42px; --rot: -24deg; --delay: -2.2s; --cap-a: #18a5a5; --cap-b: #ffc342; }
+    .mini-capsule:nth-child(5) { left: 54px; top: 120px; --rot: 21deg; --delay: -0.8s; --cap-a: #ffc342; --cap-b: #3182f6; }
+    .mini-capsule:nth-child(6) { left: 112px; top: 122px; --rot: -7deg; --delay: -2.7s; --cap-a: #03b26c; --cap-b: #f04452; }
+
+    .machine.playing .mini-capsule {
+      animation: rattleCapsule 0.3s linear infinite;
+    }
+
+    .body {
+      position: absolute;
+      left: 36px;
+      top: 148px;
+      width: 208px;
+      height: 176px;
+      border-radius: 28px 28px 18px 18px;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.2), transparent 22% 74%, rgba(0,0,0,0.06)),
+        linear-gradient(180deg, #f04452, #d72f42);
+      box-shadow: var(--shadow3);
+      border: 1px solid rgba(25, 31, 40, 0.06);
+    }
+
+    .body::before {
+      content: "GACHA\Aガチャ";
+      position: absolute;
+      left: 26px;
+      top: 18px;
+      width: 84px;
+      height: 38px;
+      display: grid;
+      place-items: center;
+      border-radius: 10px;
+      color: var(--grey900);
+      background: #fff9de;
+      box-shadow: inset 0 -2px 0 rgba(0,0,0,0.08);
+      font-size: 14px;
+      line-height: 16px;
+      font-weight: 800;
+      white-space: pre;
+      text-align: center;
+    }
+
+    .slot {
+      position: absolute;
+      left: 34px;
+      bottom: 30px;
+      width: 140px;
+      height: 54px;
+      border-radius: 10px 10px 20px 20px;
+      background:
+        linear-gradient(180deg, rgba(25,31,40,0.84), rgba(25,31,40,0.72) 40%, rgba(255,255,255,0.24) 41% 48%, rgba(25,31,40,0.7) 49%);
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.34);
+    }
+
+    .chute {
+      position: absolute;
+      left: 80px;
+      top: 133px;
+      width: 122px;
+      height: 34px;
+      border-radius: 0 0 18px 18px;
+      background: linear-gradient(180deg, #cfd5dd, #f7f8fa 45%, #b0b8c1);
+      box-shadow: inset 0 -4px 8px rgba(25, 31, 40, 0.12);
+      z-index: 1;
+    }
+
+    .knob {
+      position: absolute;
+      right: 42px;
+      top: 190px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 28%, #ffffff, #d7dde5 30%, #8b95a1 72%);
+      border: 7px solid #ffffff;
+      box-shadow: 0 8px 14px rgba(25, 31, 40, 0.24), inset 0 -5px 10px rgba(25, 31, 40, 0.18);
+      z-index: 2;
+    }
+
+    .knob::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 18px;
+      height: 58px;
+      border-radius: 999px;
+      background: #ffffff;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 -4px 6px rgba(25,31,40,0.12);
+    }
+
+    .knob::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 58px;
+      height: 18px;
+      border-radius: 999px;
+      background: #ffffff;
+      transform: translate(-50%, -50%);
+      box-shadow: inset 0 -4px 6px rgba(25,31,40,0.1);
+    }
+
+    .machine.playing .knob {
+      animation: crankTurn 1s var(--ease-standard) both;
+    }
+
+    .coin {
+      position: absolute;
+      right: 118px;
+      top: 206px;
+      width: 22px;
+      height: 42px;
+      border-radius: 999px;
+      background: rgba(25, 31, 40, 0.72);
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,0.22);
+    }
+
+    .legs {
+      position: absolute;
+      left: 52px;
+      bottom: 0;
+      width: 176px;
+      height: 36px;
+    }
+
+    .legs::before,
+    .legs::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 54px;
+      height: 36px;
+      border-radius: 0 0 14px 14px;
+      background: linear-gradient(180deg, #8b95a1, #4e5968);
+    }
+
+    .legs::before {
+      left: 10px;
+    }
+
+    .legs::after {
+      right: 10px;
+    }
+
+    .tray-shadow {
+      position: absolute;
+      left: 50%;
+      top: 352px;
+      width: 190px;
+      height: 30px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(25, 31, 40, 0.18), transparent 68%);
+      transform: translateX(-50%);
+    }
+
+    .capsule-stage {
+      position: absolute;
+      left: 50%;
+      top: 190px;
+      width: 116px;
+      height: 116px;
+      opacity: 0;
+      transform: translate(-50%, -88px) scale(0.82);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .capsule-stage.drop {
+      animation: capsuleDrop 1.15s var(--ease-enter) both;
+    }
+
+    .capsule-stage.open {
+      opacity: 1;
+      transform: translate(-50%, -70px) scale(1);
+    }
+
+    .capsule {
+      position: absolute;
+      inset: 0;
+      filter: drop-shadow(0 12px 12px rgba(25, 31, 40, 0.16));
+    }
+
+    .cap-half {
+      position: absolute;
+      left: 0;
+      width: 116px;
+      height: 58px;
+      overflow: hidden;
+      transition: transform 650ms var(--ease-spring), opacity 400ms var(--ease-standard);
+      will-change: transform;
+    }
+
+    .cap-half::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 116px;
+      height: 116px;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.72);
+      box-shadow: inset 0 9px 16px rgba(255,255,255,0.36), inset 0 -10px 14px rgba(25,31,40,0.1);
+    }
+
+    .cap-top {
+      top: 0;
+    }
+
+    .cap-top::before {
+      top: 0;
+      background: radial-gradient(circle at 32% 26%, rgba(255,255,255,0.72), transparent 18%), linear-gradient(135deg, #ffc342, #fe9800);
+    }
+
+    .cap-bottom {
+      bottom: 0;
+    }
+
+    .cap-bottom::before {
+      bottom: 0;
+      background: radial-gradient(circle at 68% 62%, rgba(255,255,255,0.44), transparent 18%), linear-gradient(145deg, #3182f6, #18a5a5);
+    }
+
+    .cap-band {
+      position: absolute;
+      left: 2px;
+      top: 53px;
+      width: 112px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.84);
+      box-shadow: 0 2px 6px rgba(25,31,40,0.14);
+      transition: opacity 250ms var(--ease-standard);
+    }
+
+    .capsule-stage.opening .cap-top {
+      transform: translate(-38px, -34px) rotate(-28deg);
+    }
+
+    .capsule-stage.opening .cap-bottom {
+      transform: translate(38px, 36px) rotate(28deg);
+    }
+
+    .capsule-stage.opening .cap-band {
+      opacity: 0;
+    }
+
+    .prize-reveal {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 220px;
+      min-height: 220px;
+      border-radius: 16px;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.96);
+      box-shadow: var(--shadow3);
+      border: 1px solid var(--grey200);
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.55);
+      transition: opacity 380ms var(--ease-enter), transform 520ms var(--ease-spring);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      gap: 8px;
+      z-index: 2;
+    }
+
+    .capsule-stage.opening .prize-reveal {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .product-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 250px;
+      min-height: 190px;
+      padding: 12px;
+      border-radius: 16px;
+      overflow: visible;
+      background: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(229, 232, 235, 0.84);
+    }
+
+    .product-visual img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      transition: transform 320ms var(--ease-spring), filter 320ms var(--ease-standard);
+      cursor: zoom-in;
+    }
+
+    .product-visual:hover img {
+      transform: scale(var(--image-hover-scale));
+      filter: drop-shadow(0 18px 28px rgba(25, 31, 40, 0.16));
+    }
+
+    .product-visual.tumbler {
+      min-height: 250px;
+    }
+
+    .product-visual.tumbler img {
+      max-height: 220px;
+    }
+
+    .product-visual.cap img {
+      max-height: 160px;
+    }
+
+    .product-visual.shirt img {
+      max-height: 168px;
+    }
+
+    .logo-stamp {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      display: inline-grid;
+      place-items: center;
+      min-width: 44px;
+      min-height: 22px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--blue600);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 800;
+      box-shadow: 0 2px 6px rgba(25, 31, 40, 0.14);
+      white-space: nowrap;
+    }
+
+    .logo-stamp.cap-logo {
+      top: 39%;
+      left: 43%;
+      min-width: 50px;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--grey900);
+      transform: translate(-50%, -50%) rotate(2deg);
+    }
+
+    .logo-stamp.tshirt-logo {
+      top: 51%;
+      color: #ffffff;
+      background: rgba(49, 130, 246, 0.96);
+      border-radius: 8px;
+    }
+
+    .logo-stamp.tumbler-logo {
+      top: 52%;
+      min-width: 52px;
+      color: var(--teal500);
+    }
+
+    .prize-name {
+      color: var(--grey900);
+      font-size: 20px;
+      line-height: 28px;
+      font-weight: 700;
+    }
+
+    .miss-visual {
+      width: 112px;
+      height: 112px;
+      border-radius: 32px;
+      display: grid;
+      place-items: center;
+      background: rgba(2, 32, 71, 0.05);
+      color: var(--grey700);
+      font-size: 36px;
+      line-height: 44px;
+      font-weight: 800;
+    }
+
+    .particle-field {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 7;
+    }
+
+    .particle {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--size);
+      height: var(--size);
+      border-radius: 50%;
+      background: var(--color);
+      opacity: 0;
+      animation: burst 780ms var(--ease-enter) forwards;
+    }
+
+    .result-panel {
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(229, 232, 235, 0.82);
+      box-shadow: var(--shadow2);
+      backdrop-filter: blur(14px);
+    }
+
+    .result-title {
+      color: var(--grey900);
+      font-size: 24px;
+      line-height: 32px;
+      font-weight: 700;
+    }
+
+    .result-copy {
+      margin: 0;
+      color: var(--grey600);
+      font-size: 16px;
+      line-height: 24px;
+      min-height: 24px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+    }
+
+    .button {
+      min-height: 58px;
+      border: 0;
+      border-radius: 17px;
+      padding: 0 24px;
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 150ms var(--ease-standard), background 150ms var(--ease-standard), opacity 150ms var(--ease-standard);
+    }
+
+    .button:active {
+      transform: scale(0.985);
+    }
+
+    .button-primary {
+      background: var(--blue500);
+      color: #ffffff;
+    }
+
+    .button-primary:hover {
+      background: var(--blue600);
+    }
+
+    .button-primary:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .button-weak {
+      min-width: 58px;
+      padding: 0 18px;
+      background: rgba(2, 32, 71, 0.05);
+      color: var(--grey700);
+    }
+
+    .button svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      width: min(calc(100% - 40px), 440px);
+      padding: 12px 16px;
+      border-radius: 8px;
+      background: var(--grey900);
+      color: #ffffff;
+      font-size: 14px;
+      line-height: 22px;
+      font-weight: 500;
+      box-shadow: var(--shadow3);
+      opacity: 0;
+      transform: translate(-50%, 12px);
+      pointer-events: none;
+      transition: opacity 180ms var(--ease-standard), transform 180ms var(--ease-standard);
+      z-index: 20;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    @keyframes floatCapsule {
+      0%, 100% { transform: translateY(0) rotate(var(--rot)); }
+      50% { transform: translateY(-5px) rotate(calc(var(--rot) + 7deg)); }
+    }
+
+    @keyframes rattleCapsule {
+      0%, 100% { transform: translate(0, 0) rotate(var(--rot)); }
+      25% { transform: translate(2px, -2px) rotate(calc(var(--rot) + 8deg)); }
+      50% { transform: translate(-2px, 1px) rotate(calc(var(--rot) - 8deg)); }
+      75% { transform: translate(2px, 2px) rotate(calc(var(--rot) + 4deg)); }
+    }
+
+    @keyframes crankTurn {
+      0% { transform: rotate(0deg) scale(1); }
+      22% { transform: rotate(95deg) scale(0.96); }
+      55% { transform: rotate(268deg) scale(1.02); }
+      82% { transform: rotate(348deg) scale(0.98); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
+
+    @keyframes capsuleDrop {
+      0% { opacity: 0; transform: translate(-50%, -88px) scale(0.62) rotate(-18deg); }
+      16% { opacity: 1; }
+      62% { transform: translate(-50%, -62px) scale(1) rotate(17deg); }
+      77% { transform: translate(-50%, -96px) scale(1.04, 0.96) rotate(-8deg); }
+      88% { transform: translate(-50%, -68px) scale(0.98, 1.03) rotate(5deg); }
+      100% { opacity: 1; transform: translate(-50%, -70px) scale(1) rotate(0deg); }
+    }
+
+    @keyframes burst {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.4);
+      }
+      18% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0);
+      }
+    }
+
+    .ja-sub,
+    .name-ja,
+    .prize-card h3 .ja,
+    .section-title .ja,
+    .event-kicker,
+    .hero-sub {
+      color: var(--grey500);
+      font-weight: 600;
+    }
+
+    .name-ja,
+    .prize-card h3 .ja {
+      display: block;
+      font-size: 12px;
+      line-height: 18px;
+      margin-top: 2px;
+    }
+
+    .section-title {
+      margin: 0 0 14px;
+      font-size: 22px;
+      line-height: 30px;
+      font-weight: 700;
+      color: var(--grey900);
+    }
+
+    .section-title .ja {
+      font-size: 15px;
+      line-height: 22px;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    .event-hero {
+      position: relative;
+      overflow: hidden;
+      padding: 24px 22px 20px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.34), transparent 28%),
+        linear-gradient(135deg, #2272eb 0%, #3182f6 42%, #18a5a5 100%);
+      color: #ffffff;
+      box-shadow: var(--shadow3);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .event-hero::after {
+      content: "";
+      position: absolute;
+      inset: -40% auto auto -20%;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      pointer-events: none;
+    }
+
+    .event-ribbon {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: rgba(255, 195, 66, 0.92);
+      color: var(--grey900);
+      font-size: 11px;
+      line-height: 16px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+
+    .event-kicker {
+      margin: 10px 0 0;
+      font-size: 14px;
+      line-height: 22px;
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .event-hero h1 {
+      margin: 4px 0 0;
+      color: #ffffff;
+      font-size: 36px;
+      line-height: 46px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      display: block;
+      margin-top: 3px;
+      font-size: 18px;
+      line-height: 26px;
+      color: rgba(255, 255, 255, 0.78);
+      font-weight: 600;
+    }
+
+    .event-desc {
+      margin: 8px 0 0;
+      font-size: 15px;
+      line-height: 24px;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .prize-lineup,
+    .how-to {
+      padding: 20px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(229, 232, 235, 0.84);
+      box-shadow: var(--shadow2);
+      overflow: visible;
+    }
+
+    .prize-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .prize-card {
+      --accent: var(--blue500);
+      min-width: 0;
+      border-radius: 16px;
+      overflow: visible;
+      background: #ffffff;
+      border: 1px solid rgba(229, 232, 235, 0.9);
+      box-shadow: inset 0 -3px 0 var(--accent);
+      transition: transform 240ms var(--ease-standard), box-shadow 240ms var(--ease-standard), z-index 0s;
+      position: relative;
+      z-index: 1;
+    }
+
+    .prize-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(25, 31, 40, 0.12), inset 0 -4px 0 var(--accent);
+      z-index: 12;
+    }
+
+    .prize-card.sold-out {
+      opacity: 0.62;
+      filter: grayscale(0.25);
+    }
+
+    .prize-card-visual {
+      position: relative;
+      min-height: 170px;
+      padding: 14px 10px 12px;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      border-radius: 20px 20px 0 0;
+    }
+
+    .prize-card-visual img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 8px 16px rgba(25, 31, 40, 0.1));
+      transition: transform 320ms var(--ease-spring), filter 320ms var(--ease-standard);
+      cursor: zoom-in;
+      transform-origin: center center;
+    }
+
+    .prize-card:hover .prize-card-visual img {
+      transform: scale(var(--image-hover-scale));
+      filter: drop-shadow(0 22px 32px rgba(25, 31, 40, 0.18));
+    }
+
+    .prize-card-visual.tumbler img {
+      max-height: 175px;
+    }
+
+    .prize-card-visual.cap img {
+      max-height: 115px;
+      max-width: 94%;
+    }
+
+    .prize-card-visual.shirt img {
+      max-height: 120px;
+      max-width: 96%;
+    }
+
+    .prize-tag {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      min-height: 24px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 12px;
+      line-height: 20px;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .prize-card-body {
+      padding: 10px 10px 14px;
+      text-align: center;
+    }
+
+    .prize-card-body h3 {
+      margin: 0;
+      font-size: 17px;
+      line-height: 24px;
+      font-weight: 700;
+      color: var(--grey900);
+    }
+
+    .prize-card-logo {
+      margin: 4px 0 0;
+      color: var(--grey600);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 700;
+    }
+
+    .prize-card-stock {
+      margin: 6px 0 0;
+      color: var(--blue600);
+      font-size: 13px;
+      line-height: 20px;
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .how-to ol {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 8px;
+    }
+
+    .how-to li {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      gap: 10px;
+      align-items: start;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: var(--grey50);
+      border: 1px solid var(--grey100);
+    }
+
+    .how-to strong {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      background: var(--blue50);
+      color: var(--blue600);
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    .how-step-title {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 700;
+      color: var(--grey900);
+    }
+
+    .how-step-copy {
+      margin: 2px 0 0;
+      font-size: 12px;
+      line-height: 18px;
+      color: var(--grey600);
+    }
+
+    .event-footer {
+      text-align: center;
+      padding: 4px 8px 0;
+      color: var(--grey500);
+      font-size: 12px;
+      line-height: 18px;
+      font-weight: 600;
+    }
+
+    .event-footer .ja-inline {
+      display: block;
+      margin-top: 2px;
+      font-size: 11px;
+      line-height: 16px;
+    }
+
+    .topbar {
+      padding-top: 0;
+    }
+
+    .brand h1 {
+      font-size: 28px;
+      line-height: 38px;
+    }
+
+    .stock-thumb {
+      width: 100%;
+      min-height: 92px;
+      padding: 8px 6px;
+      border-radius: 10px;
+      overflow: visible;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px rgba(229, 232, 235, 0.84);
+    }
+
+    .stock-thumb img {
+      width: auto;
+      height: auto;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+      transition: transform 320ms var(--ease-spring), filter 320ms var(--ease-standard);
+      cursor: zoom-in;
+      transform-origin: center center;
+    }
+
+    .stock:hover .stock-thumb img {
+      transform: scale(var(--image-hover-scale));
+      filter: drop-shadow(0 16px 24px rgba(25, 31, 40, 0.16));
+    }
+
+    .stock-thumb.tumbler img {
+      max-height: 96px;
+    }
+
+    .stock-thumb.cap img {
+      max-height: 66px;
+    }
+
+    .stock-thumb.shirt img {
+      max-height: 68px;
+    }
+
+    .stock-thumb.miss-thumb {
+      color: var(--grey500);
+      font-size: 28px;
+      line-height: 1;
+      font-weight: 800;
+      background: rgba(2, 32, 71, 0.05);
+    }
+
+    .stock-name .name-ko {
+      display: block;
+      font-size: 13px;
+      line-height: 20px;
+    }
+
+    .prize-name .ja-sub {
+      display: block;
+      font-size: 11px;
+      line-height: 16px;
+      margin-top: 2px;
+    }
+
+    .result-title .ja-sub {
+      display: block;
+      font-size: 14px;
+      line-height: 20px;
+      margin-top: 2px;
+      font-weight: 600;
+    }
+
+    .result-copy .ja-sub {
+      display: block;
+      margin-top: 2px;
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.35; transform: scale(0.92); }
+      50% { opacity: 1; transform: scale(1.08); }
+    }
+
+
+    @media (max-width: 720px) {
+      :root {
+        --machine-scale: 1.15;
+        --image-hover-scale: 1.25;
+      }
+
+      .app {
+        padding: 16px 14px max(24px, env(safe-area-inset-bottom));
+        gap: 16px;
+      }
+
+      .prize-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+
+      .prize-card-visual {
+        min-height: 150px;
+      }
+
+      .prize-card-visual.tumbler img { max-height: 150px; }
+      .prize-card-visual.cap img { max-height: 100px; }
+      .prize-card-visual.shirt img { max-height: 105px; }
+
+      .status-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      h1 {
+        font-size: 28px;
+        line-height: 38px;
+      }
+
+      .brand h1 {
+        font-size: 24px;
+        line-height: 32px;
+      }
+
+      .event-hero h1 {
+        font-size: 30px;
+        line-height: 40px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="event-hero" aria-label="이벤트 배너">
+      <span class="event-ribbon">LIMITED EVENT</span>
+      <p class="event-kicker">여명거리 스페셜 굿즈 / よめい通りスペシャルグッズ</p>
+      <h1>
+        캡슐토이 가챠
+        <span class="hero-sub">カプセルトイガチャ</span>
+      </h1>
+      <p class="event-desc">굿즈 3종 + 꽝 캡슐 총 99개 한정 / グッズ3種＋ハズレ 計99個限定</p>
+    </section>
+
+    <section class="prize-lineup" aria-label="상품 라인업">
+      <h2 class="section-title">라인업 <span class="ja">/ ラインナップ</span></h2>
+      <div class="prize-grid" id="prizeLineup"></div>
+    </section>
+
+    <header class="topbar">
+      <div class="brand">
+        <span class="eyebrow">여명 굿즈 캡슐 / よめいグッズカプセル</span>
+        <h1>한 번 돌려볼까요<span class="hero-sub" style="color:var(--grey500);font-size:17px;line-height:24px;display:block;margin-top:3px;">一回回してみませんか</span></h1>
+      </div>
+      <span class="badge" id="totalBadge">남은 99개</span>
+    </header>
+
+    <section class="stage-card" aria-label="가챠 머신 / ガチャマシン">
+      <div class="status-strip" id="stockList"></div>
+      <div class="draw-meta" id="drawMeta" aria-live="polite"></div>
+
+      <div class="machine-wrap">
+        <div class="machine-scale">
+          <div class="tray-shadow"></div>
+          <div class="machine" id="machine">
+          <div class="dome" aria-hidden="true">
+            <span class="mini-capsule"></span>
+            <span class="mini-capsule"></span>
+            <span class="mini-capsule"></span>
+            <span class="mini-capsule"></span>
+            <span class="mini-capsule"></span>
+            <span class="mini-capsule"></span>
+          </div>
+          <div class="chute"></div>
+          <div class="body">
+            <div class="slot"></div>
+          </div>
+          <div class="coin"></div>
+          <div class="knob" aria-hidden="true"></div>
+          <div class="legs"></div>
+        </div>
+
+        <div class="capsule-stage" id="capsuleStage" aria-live="polite">
+          <div class="capsule">
+            <div class="cap-half cap-top"></div>
+            <div class="cap-half cap-bottom"></div>
+            <div class="cap-band"></div>
+          </div>
+          <div class="prize-reveal" id="prizeReveal"></div>
+        </div>
+        <div class="particle-field" id="particleField" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="result-panel">
+        <div class="result-title" id="resultTitle">캡슐이 기다리고 있어요<span class="ja-sub">カプセルが待っています</span></div>
+        <p class="result-copy" id="resultCopy">손잡이를 돌리면 캡슐이 내려오고, 반으로 열리며 상품이 공개됩니다.<span class="ja-sub">ハンドルを回すとカプセルが降りて、半分に開いて景品が公開されます。</span></p>
+        <div class="controls">
+          <button class="button button-primary" id="drawButton" type="button">돌리기 / 回す</button>
+          <button class="button button-weak" id="resetButton" type="button" aria-label="재고 초기화 / 在庫リセット" title="재고 초기화 / 在庫リセット">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 12a9 9 0 1 1-2.64-6.36"></path>
+              <path d="M21 4v6h-6"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="how-to" aria-label="참여 방법">
+      <h2 class="section-title">참여 방법 <span class="ja">/ 参加方法</span></h2>
+      <ol>
+        <li>
+          <strong>01</strong>
+          <div>
+            <div class="how-step-title">돌리기 버튼</div>
+            <p class="how-step-copy">손잡이를 돌리면 캡슐이 섞입니다.<span class="ja-sub">回すボタンを押すとカプセルが混ざります。</span></p>
+          </div>
+        </li>
+        <li>
+          <strong>02</strong>
+          <div>
+            <div class="how-step-title">캡슐 오픈</div>
+            <p class="how-step-copy">캡슐이 열리며 상품 이미지가 공개됩니다.<span class="ja-sub">カプセルが開いて景品イメージが表示されます。</span></p>
+          </div>
+        </li>
+        <li>
+          <strong>03</strong>
+          <div>
+            <div class="how-step-title">확인 &amp; 재고 반영</div>
+            <p class="how-step-copy">확인을 누르면 남은 수량이 차감됩니다.<span class="ja-sub">確認を押すと残数が反映されます。</span></p>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <footer class="event-footer">
+      여명거리 이벤트 부스에서 만나요
+      <span class="ja-inline">よめい通りイベントブースでお会いしましょう</span>
+    </footer>
+  </main>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const STORAGE_KEY = "dawn-gacha-inventory-v2";
+    const PRODUCT_IMAGES = {
+      tumbler: "assets/tumbler.png",
+      cap: "assets/cap.png",
+      shirt: "assets/shirt.png"
+    };
+
+    const DEFAULT_ITEMS = [
+      {
+        id: "tumbler",
+        name: "텀블러",
+        nameJa: "タンブラー",
+        tag: "A",
+        count: 4,
+        color: "#18a5a5",
+        kind: "prize",
+        logo: "오토케",
+        logoClass: "tumbler-logo",
+        image: PRODUCT_IMAGES.tumbler
+      },
+      {
+        id: "cap",
+        name: "모자",
+        nameJa: "キャップ",
+        tag: "S",
+        count: 1,
+        color: "#a234c7",
+        kind: "prize",
+        logo: "오토케",
+        logoClass: "cap-logo",
+        image: PRODUCT_IMAGES.cap
+      },
+      {
+        id: "shirt",
+        name: "티셔츠",
+        nameJa: "Tシャツ",
+        tag: "A",
+        count: 4,
+        color: "#3182f6",
+        kind: "prize",
+        logo: "여명거리",
+        logoClass: "tshirt-logo",
+        image: PRODUCT_IMAGES.shirt
+      },
+      {
+        id: "miss",
+        name: "꽝",
+        nameJa: "ハズレ",
+        count: 90,
+        color: "#6b7684",
+        kind: "miss"
+      }
+    ];
+
+    const stockList = document.getElementById("stockList");
+    const totalBadge = document.getElementById("totalBadge");
+    const drawButton = document.getElementById("drawButton");
+    const resetButton = document.getElementById("resetButton");
+    const machine = document.getElementById("machine");
+    const capsuleStage = document.getElementById("capsuleStage");
+    const prizeReveal = document.getElementById("prizeReveal");
+    const particleField = document.getElementById("particleField");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultCopy = document.getElementById("resultCopy");
+    const toast = document.getElementById("toast");
+    const prizeLineup = document.getElementById("prizeLineup");
+    const drawMeta = document.getElementById("drawMeta");
+
+    function bi(ko, ja) {
+      return `${ko}<span class="ja-sub">${ja}</span>`;
+    }
+
+    function biPlain(ko, ja) {
+      return `${ko} / ${ja}`;
+    }
+
+    let inventory = loadInventory();
+    let isDrawing = false;
+    let pendingItemId = null;
+    let toastTimer;
+    const drawLog = [];
+
+    function normalizeCount(value, fallback = 0) {
+      const count = Math.floor(Number(value));
+      return Number.isFinite(count) ? Math.max(0, count) : fallback;
+    }
+
+    function buildPool(source = inventory) {
+      return source.flatMap((item) => {
+        const count = normalizeCount(item.count);
+        return Array.from({ length: count }, () => item.id);
+      });
+    }
+
+    function pickRandomIndex(max) {
+      if (max <= 0) return 0;
+      if (window.crypto?.getRandomValues) {
+        const buffer = new Uint32Array(1);
+        window.crypto.getRandomValues(buffer);
+        return buffer[0] % max;
+      }
+      return Math.floor(Math.random() * max);
+    }
+
+    function getPoolSummary(source = inventory) {
+      const prizeCount = source
+        .filter((item) => item.kind === "prize")
+        .reduce((sum, item) => sum + normalizeCount(item.count), 0);
+      const missCount = source
+        .filter((item) => item.kind === "miss")
+        .reduce((sum, item) => sum + normalizeCount(item.count), 0);
+      const total = prizeCount + missCount;
+      const rate = total > 0 ? ((prizeCount / total) * 100).toFixed(1) : "0.0";
+      return { prizeCount, missCount, total, rate };
+    }
+
+    function renderDrawMeta() {
+      if (!drawMeta) return;
+      const { prizeCount, missCount, total, rate } = getPoolSummary();
+      const recent = drawLog.length
+        ? drawLog.map((entry) => `<span class="${entry.kind === "miss" ? "miss" : "hit"}">${entry.name}</span>`).join(" · ")
+        : `<span class="miss">${biPlain("아직 없음", "まだなし")}</span>`;
+
+      drawMeta.innerHTML = `
+        <div class="draw-meta-row">${biPlain(`굿즈 ${prizeCount}개 / 전체 ${total}개 · 당첨률 ${rate}%`, `グッズ${prizeCount}個 / 計${total}個 · 当選率${rate}%`)}</div>
+        <div class="draw-meta-row recent">${biPlain("최근 결과", "最近の結果")}: ${recent}</div>
+      `;
+
+      if (prizeCount === 0 && missCount > 0) {
+        drawMeta.innerHTML += `<div class="draw-meta-row recent">${biPlain("굿즈 재고가 없어 꽝만 나옵니다. 재고 초기화를 눌러주세요.", "グッズ在庫がないためハズレのみ出ます。在庫リセットを押してください。")}</div>`;
+      }
+    }
+
+    function recordDraw(item) {
+      drawLog.unshift({
+        id: item.id,
+        name: item.name,
+        kind: item.kind
+      });
+      drawLog.length = Math.min(drawLog.length, 8);
+    }
+
+    renderInventory();
+
+    drawButton.addEventListener("click", handlePrimaryAction);
+    resetButton.addEventListener("click", () => {
+      inventory = structuredClone(DEFAULT_ITEMS);
+      pendingItemId = null;
+      isDrawing = false;
+      drawLog.length = 0;
+      saveInventory();
+      renderInventory();
+      resetAnimation();
+      resultTitle.innerHTML = bi("재고를 다시 채웠어요", "在庫を補充しました");
+      resultCopy.innerHTML = bi("텀블러 4개, 모자 1개, 티셔츠 4개, 꽝 90개로 돌아갔습니다.", "タンブラー4・キャップ1・Tシャツ4・ハズレ90に戻りました。");
+      showToast(biPlain("재고가 초기화되었습니다.", "在庫をリセットしました。"));
+    });
+
+    function loadInventory() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+        if (!Array.isArray(saved)) return structuredClone(DEFAULT_ITEMS);
+        return DEFAULT_ITEMS.map((item) => {
+          const matched = saved.find((entry) => entry.id === item.id);
+          return { ...item, count: normalizeCount(matched?.count ?? item.count, item.count) };
+        });
+      } catch {
+        return structuredClone(DEFAULT_ITEMS);
+      }
+    }
+
+    function saveInventory() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(inventory.map(({ id, count }) => ({ id, count }))));
+    }
+
+    function renderInventory() {
+      const total = inventory.reduce((sum, item) => sum + item.count, 0);
+      totalBadge.textContent = biPlain(`남은 ${total}개`, `残り${total}個`);
+      stockList.innerHTML = inventory.map((item) => `
+        <div class="stock ${item.kind === "miss" ? "miss" : ""}">
+          ${item.image
+            ? `<div class="stock-thumb ${item.id}"><img src="${item.image}" alt="${biPlain(item.name, item.nameJa)}"></div>`
+            : `<div class="stock-thumb miss-thumb" aria-hidden="true">✕</div>`}
+          <div class="stock-name">
+            <span class="name-ko">${item.name}</span>
+            <span class="name-ja">${item.nameJa || ""}</span>
+          </div>
+          <div class="stock-count">${item.count}</div>
+        </div>
+      `).join("");
+      renderPrizeLineup();
+      renderDrawMeta();
+      drawButton.disabled = (total === 0 && !pendingItemId) || isDrawing;
+      drawButton.textContent = pendingItemId
+        ? biPlain("확인", "確認")
+        : (total === 0 ? biPlain("재고 없음", "在庫なし") : (isDrawing ? biPlain("뽑는 중", "抽選中") : biPlain("돌리기", "回す")));
+    }
+
+    function renderPrizeLineup() {
+      if (!prizeLineup) return;
+      const prizes = DEFAULT_ITEMS.filter((item) => item.kind === "prize");
+      prizeLineup.innerHTML = prizes.map((item) => {
+        const stock = inventory.find((entry) => entry.id === item.id);
+        const count = stock?.count ?? 0;
+        return `
+          <article class="prize-card ${count === 0 ? "sold-out" : ""}" style="--accent:${item.color}">
+            <div class="prize-card-visual ${item.id}">
+              <img src="${item.image}" alt="${biPlain(item.name, item.nameJa)}">
+              <span class="prize-tag">${item.tag}賞</span>
+            </div>
+            <div class="prize-card-body">
+              <h3>${item.name}<span class="ja">${item.nameJa}</span></h3>
+              <p class="prize-card-logo">${item.logo}</p>
+              <p class="prize-card-stock">${biPlain(`잔여 ${count}`, `残り${count}`)}</p>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function pickPrize() {
+      const pool = buildPool();
+      if (pool.length === 0) return null;
+      const selectedId = pool[pickRandomIndex(pool.length)];
+      return inventory.find((item) => item.id === selectedId) || null;
+    }
+
+    function handlePrimaryAction() {
+      if (pendingItemId) {
+        confirmPendingItem();
+        return;
+      }
+      draw();
+    }
+
+    async function draw() {
+      if (isDrawing) return;
+      const prize = pickPrize();
+      if (!prize) {
+        showToast(biPlain("남은 상품이 없습니다.", "残り景品がありません。"));
+        return;
+      }
+
+      isDrawing = true;
+      renderInventory();
+      resetAnimation();
+      resultTitle.innerHTML = bi("손잡이를 돌리는 중이에요", "ハンドルを回しています");
+      resultCopy.innerHTML = bi("캡슐이 섞이고 있습니다.", "カプセルを混ぜています。");
+
+      machine.classList.add("playing");
+      await wait(960);
+
+      capsuleStage.classList.add("drop");
+      resultTitle.innerHTML = bi("캡슐이 내려왔어요", "カプセルが降りてきました");
+      resultCopy.innerHTML = bi("잠시 후 캡슐이 열립니다.", "まもなくカプセルが開きます。");
+      await wait(1250);
+
+      prizeReveal.innerHTML = renderPrize(prize);
+      capsuleStage.classList.add("open", "opening");
+      burstParticles();
+      await wait(520);
+
+      pendingItemId = prize.id;
+      recordDraw(prize);
+      renderDrawMeta();
+      resultTitle.innerHTML = prize.kind === "miss" ? bi("아쉽게도 꽝입니다", "残念、ハズレです") : bi(`${prize.name} 당첨!`, `${prize.nameJa} 当選！`);
+      resultCopy.innerHTML = bi("확인을 누르면 수량이 반영됩니다.", "確認を押すと残数が反映されます。");
+      isDrawing = false;
+      machine.classList.remove("playing");
+      renderInventory();
+    }
+
+    function confirmPendingItem() {
+      const item = inventory.find((entry) => entry.id === pendingItemId);
+      if (!item) {
+        pendingItemId = null;
+        renderInventory();
+        return;
+      }
+
+      item.count = Math.max(0, item.count - 1);
+      saveInventory();
+      pendingItemId = null;
+      resultTitle.innerHTML = item.kind === "miss"
+        ? bi("다음 기회에 다시 도전해요", "次回またチャレンジしてください")
+        : bi(`${item.name} 수량이 반영됐어요`, `${item.nameJa} の残数を反映しました`);
+      resultCopy.innerHTML = item.kind === "miss"
+        ? bi(`남은 꽝 캡슐은 ${item.count}개입니다.`, `ハズレカプセル残り${item.count}個です。`)
+        : bi(`남은 ${item.name} 수량은 ${item.count}개입니다.`, `${item.nameJa} 残り${item.count}個です。`);
+      renderInventory();
+      showToast(biPlain("카운트에 반영되었습니다.", "カウントに反映しました。"));
+    }
+
+    function renderPrize(item) {
+      if (item.kind === "miss") {
+        return `
+          <div class="miss-visual">꽝</div>
+          <div class="prize-name">${item.name}<span class="ja-sub">${item.nameJa}</span></div>
+        `;
+      }
+
+      return `
+        <div class="product-visual ${item.id}">
+          <img src="${item.image}" alt="${biPlain(item.name, item.nameJa)}">
+        </div>
+        <div class="prize-name">${item.name}<span class="ja-sub">${item.nameJa}</span></div>
+      `;
+    }
+
+    function resetAnimation() {
+      machine.classList.remove("playing");
+      capsuleStage.classList.remove("drop", "open", "opening");
+      prizeReveal.innerHTML = "";
+      particleField.innerHTML = "";
+      void capsuleStage.offsetWidth;
+    }
+
+    function burstParticles() {
+      const colors = ["#3182f6", "#ffc342", "#03b26c", "#f04452", "#18a5a5"];
+      particleField.innerHTML = "";
+      for (let i = 0; i < 26; i += 1) {
+        const dot = document.createElement("span");
+        const angle = (Math.PI * 2 * i) / 26;
+        const distance = 72 + Math.random() * 76;
+        dot.className = "particle";
+        dot.style.setProperty("--x", `${50 + (Math.random() - 0.5) * 8}%`);
+        dot.style.setProperty("--y", "61%");
+        dot.style.setProperty("--dx", `${Math.cos(angle) * distance}px`);
+        dot.style.setProperty("--dy", `${Math.sin(angle) * distance}px`);
+        dot.style.setProperty("--size", `${5 + Math.random() * 7}px`);
+        dot.style.setProperty("--color", colors[i % colors.length]);
+        particleField.appendChild(dot);
+      }
+    }
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("show");
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2400);
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+  </script>
+</body>
+</html>
